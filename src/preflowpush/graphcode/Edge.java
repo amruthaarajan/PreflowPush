@@ -41,8 +41,10 @@ public class Edge {
         this.v1 = v;
         this.v2 = w;
 
+        // added by amruthaa and pooja
+        // this adds incident edge to corresponding vertex when creating a new edge
         this.getFirstEndpoint().getIncidentEdgeList().add(this);
-        tcss543.edge_flows.put(this,0);
+
     }
 
     /**

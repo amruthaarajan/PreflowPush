@@ -7,7 +7,11 @@ import java.io.PrintWriter;
 import java.util.Random;
 
 public class BuildGraph {
-	private void BuildGraph(String fileName, String directory, int vertices, int dense, int maxCapacity, int minCapacity) {
+    public BuildGraph(String s, String s1, int i, int i1, int i2, int i3) {
+        BuildGraph(s,s1,i,i1,i2,i3);
+    }
+
+    private void BuildGraph(String fileName, String directory, int vertices, int dense, int maxCapacity, int minCapacity) {
 		Random random = new Random();
 		try {
 			String dirName = directory;//
@@ -76,4 +80,9 @@ public class BuildGraph {
 		}
 		System.out.print("\nDone");
 	}
+
+	public static void main(String args[])
+    {
+        BuildGraph bg=new BuildGraph("test1.txt","/Users/amruthaa/data/",100,70,20,10);
+    }
 }

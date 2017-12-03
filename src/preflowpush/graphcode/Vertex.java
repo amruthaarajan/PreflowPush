@@ -61,11 +61,17 @@ public class Vertex {
         this.data = data;
     }
 
+
+    // added by amruthaa and pooja
+    // this method returns incident edges list for a vertex
+
     public LinkedList getIncidentEdgeList()
     {
         return this.incidentEdgeList;
     }
 
+    // added by amruthaa and pooja
+    // this method adds a new edge to incident edges  list for a vertex.
     public void addToIncidentEdgeList(Edge e) throws Exception {
         boolean isAddSucessFul = this.incidentEdgeList.add(e);
         if(!isAddSucessFul)
