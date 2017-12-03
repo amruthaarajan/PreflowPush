@@ -65,4 +65,12 @@ public class Vertex {
     {
         return this.incidentEdgeList;
     }
+
+    public void addToIncidentEdgeList(Edge e) throws Exception {
+        boolean isAddSucessFul = this.incidentEdgeList.add(e);
+        if(!isAddSucessFul)
+        {
+            throw new Exception("Error in adding an edge");
+        }
+    }
 }

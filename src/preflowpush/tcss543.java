@@ -13,104 +13,62 @@ public class tcss543 {
 
     static SimpleGraph G = new SimpleGraph();
 
-//    static Hashtable table;
+    static Hashtable table;
 
     public static Hashtable<Edge,Integer> edge_flows = new Hashtable<>();
     public static Hashtable<Vertex,Integer> vertex_height = new Hashtable<>();
     public static Hashtable<Vertex,Integer> vertex_excess = new Hashtable<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         Hashtable<String,Vertex> input = new Hashtable<>();
 
-//        table = LoadSimpleGraph(G,"/Users/amruthaa/g1.txt");
-//        Set<String> keys = table.keySet();
-//        for(String key: keys) {
-//            if (key.equals("s")) {
-//                vertex_height.put((Vertex)table.get(key),table.size());
-//                vertex_excess.put((Vertex)table.get(key),Integer.MAX_VALUE);
-//            }
-//            else {
-//                vertex_height.put((Vertex) table.get(key), 1);
-//                vertex_excess.put((Vertex) table.get(key), 0);
-//            }
-//        }
-//        PreflowPush((Vertex)table.get("s"),(Vertex)table.get("t"));
-//        System.out.printf("Flow pushed through the graph: %d\n", vertex_excess.get((Vertex)table.get("t")));
-
-        Vertex source = new Vertex(null,"s");
-        Vertex sink = new Vertex(null,"t");
-
-
-        Vertex a = new Vertex(null,"a");
-        Vertex b = new Vertex(null,"b");
-        Vertex c = new Vertex(null,"c");
-        Vertex d = new Vertex(null,"d");
-        Vertex e = new Vertex(null,"e");
-        new Edge(a, source, "0",null);
-        new Edge(source, a, "5",null);
-        new Edge(b, source, "0",null);
-        new Edge(source, b, "3",null);
-        new Edge(c, source, "0",null);
-        new Edge(source, c, "12",null);
-        new Edge(c, a, "0",null);
-        new Edge(d, a, "0",null);
-        new Edge(d, c, "0",null);
-        new Edge(e, c, "0",null);
-        new Edge(e, b, "0",null);
-        new Edge(a, c, "2",null);
-        new Edge(a, d, "6",null);
-        new Edge(c, d, "1",null);
-        new Edge(c, e, "2",null);
-        new Edge(b, e, "4",null);
-        new Edge(sink, c, "0",null);
-        new Edge(sink, d, "0",null);
-        new Edge(sink, e, "0",null);
-        new Edge(c, sink, "2",null);
-        new Edge(d, sink, "8",null);
-        new Edge(e, sink, "11",null);
-
-
-        input.put("s",source);
-        input.put("a", a);
-        input.put("b", b);
-        input.put("c", c);
-        input.put("d",d);
-        input.put("e", e);
-        input.put("t",sink);
-
-        Set<String> keys = input.keySet();
+        table = LoadSimpleGraph(G,"/Users/amruthaa/n10-m10-cmin5-cmax10-f30.txt");
+        Set<String> keys = table.keySet();
+        //Set<Edge> visited = new HashSet<>();
         for(String key: keys) {
+            Vertex current_vertex = (Vertex)table.get(key);
             if (key.equals("s")) {
-                vertex_height.put((Vertex)input.get(key),input.size());
-                vertex_excess.put((Vertex)input.get(key),Integer.MAX_VALUE);
+                vertex_height.put(current_vertex,table.size());
+                vertex_excess.put(current_vertex,Integer.MAX_VALUE);
             }
             else {
-                vertex_height.put((Vertex) input.get(key), 1);
-                vertex_excess.put((Vertex) input.get(key), 0);
+                vertex_height.put(current_vertex, 1);
+                vertex_excess.put(current_vertex, 0);
             }
-        }
 
-        PreflowPush((Vertex)input.get("s"),(Vertex)input.get("t"));
-        System.out.printf("Flow pushed through the graph: %d\n", vertex_excess.get((Vertex)input.get("t")));
+            LinkedList incident_edges_for_current= current_vertex.getIncidentEdgeList();
+
+            for (int i = 0; i < incident_edges_for_current.size(); i++) {
+                Edge temp = (Edge) incident_edges_for_current.get(i);
+                if(!isResidualEdgeAlreadyAdded(temp))
+                {
+                    Edge e = new Edge(temp.getSecondEndpoint(),temp.getFirstEndpoint(),0.0,null);
+                    temp.getFirstEndpoint().addToIncidentEdgeList(e);
+                }
+            }
+
+        }
+        PreflowPush((Vertex)table.get("s"),(Vertex)table.get("t"));
+        System.out.printf("Flow pushed through the graph: %d\n", vertex_excess.get((Vertex)table.get("t")));
 
     }
 
-    public static Edge returnEdgeBetweenVertexs(Vertex v1, Vertex v2)
+    public static boolean isResidualEdgeAlreadyAdded(Edge e)
     {
-        Iterator it = v1.getIncidentEdgeList().iterator();
-        while (it.hasNext()) {
-            Edge e = (Edge) it.next();
-            if(e.getSecondEndpoint().equals(v2))
+        Vertex firstVertex = e.getFirstEndpoint();
+        LinkedList incident_edges_for_first_vertex = firstVertex.getIncidentEdgeList();
+        for(int i=0;i< incident_edges_for_first_vertex.size();i++)
+        {
+            if(((Edge)incident_edges_for_first_vertex.get(i)).getFirstEndpoint().equals(e.getSecondEndpoint()))
             {
-                return e;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     public static void PreflowPush(Vertex source, Vertex sink) {
-        // source.height should be the number of Vertexs, sink.height should be 1
         LinkedList<Vertex> q = new LinkedList<Vertex>();
         q.add(source);
         while (!q.isEmpty()) {
@@ -162,8 +120,7 @@ public class tcss543 {
     }
 
     private static int remaining(Edge e) {
-//        int x= ((Double)e.getData()).intValue() - tcss543.edge_flows.get(e);
-        int x= Integer.parseInt(e.getData().toString()) - tcss543.edge_flows.get(e);
+        int x= ((Double)e.getData()).intValue() - tcss543.edge_flows.get(e);
         return x;
     }
 
@@ -177,4 +134,16 @@ public class tcss543 {
         return ((Edge) edges.get(i)).getSecondEndpoint();
     }
 
+    public static Edge returnEdgeBetweenVertexs(Vertex v1, Vertex v2)
+    {
+        Iterator it = v1.getIncidentEdgeList().iterator();
+        while (it.hasNext()) {
+            Edge e = (Edge) it.next();
+            if(e.getSecondEndpoint().equals(v2))
+            {
+                return e;
+            }
+        }
+        return null;
+    }
 }
